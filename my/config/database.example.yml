@@ -1,0 +1,14 @@
+db:
+  adapter: mysql
+  host: localhost
+  port: 3306
+  name: qor_example
+  user: root
+  password: apple1234
+#mongodb:
+#  adapter: mongodb
+#  host: 192.168.1.142
+#  port: 27017
+#  name: wyaoo
+#  user: webwriter
+#  password: webwriter
