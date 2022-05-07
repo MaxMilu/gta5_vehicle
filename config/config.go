@@ -1,6 +1,8 @@
 package config
 
-import "github.com/jinzhu/configor"
+import (
+	"github.com/jinzhu/configor"
+)
 
 type SMTPConfig struct {
 	Host     string `env:"SMTP_Host"`
@@ -31,7 +33,8 @@ var Config = struct {
 }{}
 
 func init() {
-	if err := configor.Load(&Config, "my/config/database.example.yml"); err != nil {
-		panic(err)
+	if err := configor.Load(&Config, "config/database.example.yml"); err != nil {
+		println(err.Error())
+		return
 	}
 }

@@ -1,27 +1,20 @@
 package main
 
 import (
-	"flag"
-	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/pkg/errors"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/qor/admin"
-	"mime"
 	"net/http"
-	"os"
-	"qor_test/my/config"
 )
 
-// Define a GORM-backend model
+// Create a GORM-backend model
 type User struct {
 	gorm.Model
 	Name string
 }
 
-// Define another GORM-backend model
+// Create another GORM-backend model
 type Product struct {
 	gorm.Model
 	Name        string
@@ -29,46 +22,25 @@ type Product struct {
 }
 
 func main() {
+	DB, _ := gorm.Open("sqlite3", "demo.db")
+	DB.AutoMigrate(&User{}, &Product{})
 
-	cmdLine := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
-	cmdLine.Parse(os.Args[1:])
-
-	mime.AddExtensionType(".js", "text/javascript")
-
-	// Set up the database
-	//DB, _ := gorm.Open("sqlite3", "demo.db")
-	//DB.AutoMigrate(&User{}, &Product{})
-
-	var DB *gorm.DB
-
-	dbConfig := config.Config.DB
-	var err error
-	if config.Config.DB.Adapter == "mysql" {
-		DB, err = gorm.Open("mysql", fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?parseTime=True&loc=UTC", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.Name))
-	} else if config.Config.DB.Adapter == "postgres" {
-		DB, err = gorm.Open("postgres", fmt.Sprintf("postgres://%v:%v@%v/%v?sslmode=disable", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Name))
-	} else if config.Config.DB.Adapter == "sqlite" {
-		DB, err = gorm.Open("sqlite3", fmt.Sprintf("%v/%v", os.TempDir(), dbConfig.Name))
-	} else {
-		panic(errors.New("not supported database adapter"))
-	}
-	if err != nil {
-		fmt.Println(errors.WithStack(err).Error())
-	}
-
-	// Initalize
+	// Initialize
 	Admin := admin.New(&admin.AdminConfig{DB: DB})
 
-	// Create resources from GORM-backend model
+	// Allow to use Admin to manage User, Product
 	Admin.AddResource(&User{})
 	Admin.AddResource(&Product{})
 
-	// Initalize an HTTP request multiplexer
+	// initialize an HTTP request multiplexer
 	mux := http.NewServeMux()
 
-	// Mount admin to the mux
+	// Mount admin interface to mux
 	Admin.MountTo("/admin", mux)
-
-	fmt.Printf("Listening on: %v\n", config.Config.Port)
-	http.ListenAndServe(fmt.Sprintf(":%v", config.Config.Port), mux)
+	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/admin")
+	})
+	r.Any("/admin/*resources", gin.WrapH(mux))
+	r.Run("0.0.0.0:" + "9000")
 }
