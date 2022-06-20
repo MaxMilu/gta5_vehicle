@@ -4,13 +4,6 @@ import (
 	"github.com/jinzhu/configor"
 )
 
-type SMTPConfig struct {
-	Host     string `env:"SMTP_Host"`
-	Port     int    `env:"SMTP_Port"`
-	User     string `env:"SMTP_User"`
-	Password string `env:"SMTP_Password"`
-}
-
 var Config = struct {
 	HTTPS  bool `default:"false" env:"HTTPS"`
 	Port   uint `default:"7000" env:"PORT"`
