@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/qor/admin"
 	"my_qor_test/config/db"
@@ -10,22 +9,7 @@ import (
 	"net/http"
 )
 
-// Create a GORM-backend model
-type User struct {
-	gorm.Model
-	Name string
-}
-
-// Create another GORM-backend model
-type Product struct {
-	gorm.Model
-	Name        string
-	Description string
-}
-
 func main() {
-	//DB, _ := gorm.Open("sqlite3", "demo.db")
-	//DB.AutoMigrate(&User{}, &Product{})
 
 	// Initialize
 	Admin := admin.New(&admin.AdminConfig{DB: db.DB})
