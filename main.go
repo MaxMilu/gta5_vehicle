@@ -2,19 +2,29 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/qor/admin"
+	"github.com/qor/qor-example/config/application"
+	"my_qor_test/app/vehicle"
 	"my_qor_test/config/db"
-	"my_qor_test/model/gta"
 	"net/http"
 )
 
 func main() {
 
 	// Initialize
-	Admin := admin.New(&admin.AdminConfig{DB: db.DB})
+	var (
+		Router      = chi.NewRouter()
+		Admin       = admin.New(&admin.AdminConfig{DB: db.DB})
+		Application = application.New(&application.Config{
+			Router: Router,
+			Admin:  Admin,
+			DB:     db.DB,
+		})
+	)
 
-	Admin.AddResource(&gta.Vehicle{})
+	Application.Use(vehicle.New(&vehicle.Config{}))
 
 	// initialize an HTTP request multiplexer
 	mux := http.NewServeMux()
