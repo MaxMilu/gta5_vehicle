@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/qor/admin"
+	"my_qor_test/model/gta"
 	"net/http"
 )
 
@@ -28,13 +29,10 @@ func main() {
 	// Initialize
 	Admin := admin.New(&admin.AdminConfig{DB: DB})
 
-	// Allow to use Admin to manage User, Product
-	Admin.AddResource(&User{})
-	Admin.AddResource(&Product{})
+	Admin.AddResource(&gta.Vehicle{})
 
 	// initialize an HTTP request multiplexer
 	mux := http.NewServeMux()
-
 	// Mount admin interface to mux
 	Admin.MountTo("/admin", mux)
 	r := gin.Default()

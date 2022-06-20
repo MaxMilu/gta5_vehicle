@@ -2,7 +2,7 @@ db:
   adapter: mysql
   host: 127.0.0.1
   port: 3306
-  name: qor_example
+  name: wtf
   user: root
   password: apple1234
 #mongodb:
