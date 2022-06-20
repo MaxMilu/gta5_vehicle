@@ -1,6 +1,9 @@
 package gta
 
+import "my_qor_test/model"
+
 type Vehicle struct {
+	model.BaseModel
 	ID              int     //
 	Category        string  // 类别英文名
 	CategoryName    string  // 类别中文名
