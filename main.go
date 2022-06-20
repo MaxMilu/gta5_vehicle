@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/qor/admin"
+	"my_qor_test/config/db"
 	"my_qor_test/model/gta"
 	"net/http"
 )
@@ -23,11 +24,11 @@ type Product struct {
 }
 
 func main() {
-	DB, _ := gorm.Open("sqlite3", "demo.db")
-	DB.AutoMigrate(&User{}, &Product{})
+	//DB, _ := gorm.Open("sqlite3", "demo.db")
+	//DB.AutoMigrate(&User{}, &Product{})
 
 	// Initialize
-	Admin := admin.New(&admin.AdminConfig{DB: DB})
+	Admin := admin.New(&admin.AdminConfig{DB: db.DB})
 
 	Admin.AddResource(&gta.Vehicle{})
 
