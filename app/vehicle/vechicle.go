@@ -21,8 +21,10 @@ type Config struct {
 
 // ConfigureApplication configure application
 func (app App) ConfigureApplication(application *application.Application) {
+	//controller := &Controller{View: render.New(&render.Config{AssetFileSystem: application.AssetFS.NameSpace("vehicle")}, "app/vehicle/views")}
+	//funcmapmaker.AddFuncMapMaker(controller.View)
+
 	admin := application.Admin
-	admin.RegisterViewPath("app/vehicle/views")
 	admin.AddMenu(&frameAdmin.Menu{Name: "Vehicle", Priority: 1})
 	setupVehiclePage(admin)
 }

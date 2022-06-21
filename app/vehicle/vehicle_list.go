@@ -2,6 +2,7 @@ package vehicle
 
 import (
 	"bytes"
+	"github.com/jinzhu/gorm"
 	frameAdmin "github.com/qor/admin"
 	"github.com/qor/qor"
 	frameUtils "github.com/qor/qor/utils"
@@ -25,17 +26,38 @@ func setVehiclePage(admin *frameAdmin.Admin, res *frameAdmin.Resource) {
 	res.IndexAttrs("VoMainImage", "CategoryName", "Brand", "Name")
 
 	res.UseTheme("grid")
+	//res.UseTheme("vehicle_list")
 
-	res.Meta(&frameAdmin.Meta{Name: "VoMainImage", Valuer: func(record interface{}, context *qor.Context) interface{} {
-		if p, ok := record.(*voVehicle); ok {
-			result := bytes.NewBufferString("")
-			tmpl, _ := template.New("").Parse("<img src='{{.image}}'></img>")
-			tmpl.Execute(result, map[string]string{"image": p.MainImageURL})
-			return template.HTML(result.String())
-		}
-		return ""
-	}})
+	//admin.GetRouter().Post("/gta/vehicle_list_get_scope_quantity", getManifestScopeQuantity)
 
+	res.Scope(&frameAdmin.Scope{
+		Name: "All",
+		Handler: func(dbs *gorm.DB, context *qor.Context) *gorm.DB {
+			return context.GetDB()
+		},
+		Default: true,
+	})
+	res.Scope(&frameAdmin.Scope{
+		Name:  "LikeIt",
+		Label: "Like",
+		Handler: func(dbs *gorm.DB, context *qor.Context) *gorm.DB {
+			return dbs.Where("like_it = ?", true)
+		},
+	})
+	res.Scope(&frameAdmin.Scope{
+		Name: "Wishlist",
+		Handler: func(dbs *gorm.DB, context *qor.Context) *gorm.DB {
+			return dbs.Where("wishlist = ?", true)
+		},
+	})
+	res.Scope(&frameAdmin.Scope{
+		Name: "AlreadyHas",
+		Handler: func(dbs *gorm.DB, context *qor.Context) *gorm.DB {
+			return dbs.Where("already_has = ?", true)
+		},
+	})
+
+	//	region Filter
 	res.Filter(&frameAdmin.Filter{
 		Name: "CategoryName",
 		Type: "select_one",
@@ -102,5 +124,187 @@ func setVehiclePage(admin *frameAdmin.Admin, res *frameAdmin.Resource) {
 			AllowBlank: true,
 		},
 	})
+	//	endregion
+
+	//	region Meta
+	res.Meta(&frameAdmin.Meta{Name: "VoMainImage", Valuer: func(record interface{}, context *qor.Context) interface{} {
+		if p, ok := record.(*voVehicle); ok {
+			result := bytes.NewBufferString("")
+			tmpl, _ := template.New("").Parse("<img src='{{.image}}'></img>")
+			err := tmpl.Execute(result, map[string]string{"image": p.MainImageURL})
+			if err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			return template.HTML(result.String())
+		}
+		return ""
+	}})
+	//	endregion
+
+	//	region Action
+	res.Action(&frameAdmin.Action{
+		Name: "Delete",
+		Visible: func(record interface{}, context *frameAdmin.Context) bool {
+			return false
+		},
+	})
+
+	res.Action(&frameAdmin.Action{
+		Name: "Like",
+		Handler: func(argument *frameAdmin.ActionArgument) error {
+			var (
+				this gta.Vehicle
+				dbs  = argument.Context.GetDB()
+			)
+			if err := dbs.Select("id").Where("id = ?", argument.Context.ResourceID).Find(&this).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			if err := dbs.Model(&gta.Vehicle{}).Where("id = ?", this.ID).Update("like", true).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *frameAdmin.Context) bool {
+			var (
+				this = record.(*voVehicle)
+			)
+			if !this.LikeIt {
+				return true
+			}
+			return false
+		},
+		Modes: []string{"menu_item"},
+	})
+	res.Action(&frameAdmin.Action{
+		Name: "UnLike",
+		Handler: func(argument *frameAdmin.ActionArgument) error {
+			var (
+				this gta.Vehicle
+				dbs  = argument.Context.GetDB()
+			)
+			if err := dbs.Select("id").Where("id = ?", argument.Context.ResourceID).Find(&this).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			if err := dbs.Model(&gta.Vehicle{}).Where("id = ?", this.ID).Update("like_it", false).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *frameAdmin.Context) bool {
+			var (
+				this = record.(*voVehicle)
+			)
+			if this.LikeIt {
+				return true
+			}
+			return false
+		},
+		Modes: []string{"menu_item"},
+	})
+	res.Action(&frameAdmin.Action{
+		Name: "Wishlist",
+		Handler: func(argument *frameAdmin.ActionArgument) error {
+			var (
+				this gta.Vehicle
+				dbs  = argument.Context.GetDB()
+			)
+			if err := dbs.Select("id").Where("id = ?", argument.Context.ResourceID).Find(&this).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			if err := dbs.Model(&gta.Vehicle{}).Where("id = ?", this.ID).Update("wishlist", true).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *frameAdmin.Context) bool {
+			var (
+				this = record.(*voVehicle)
+			)
+			if !this.Wishlist {
+				return true
+			}
+			return false
+		},
+		Modes: []string{"menu_item"},
+	})
+	res.Action(&frameAdmin.Action{
+		Name: "RemoveWishlist",
+		Handler: func(argument *frameAdmin.ActionArgument) error {
+			var (
+				this gta.Vehicle
+				dbs  = argument.Context.GetDB()
+			)
+			if err := dbs.Select("id").Where("id = ?", argument.Context.ResourceID).Find(&this).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			if err := dbs.Model(&gta.Vehicle{}).Where("id = ?", this.ID).Update("wishlist", false).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *frameAdmin.Context) bool {
+			var (
+				this = record.(*voVehicle)
+			)
+			if this.Wishlist {
+				return true
+			}
+			return false
+		},
+		Modes: []string{"menu_item"},
+	})
+	res.Action(&frameAdmin.Action{
+		Name: "AlreadyHas",
+		Handler: func(argument *frameAdmin.ActionArgument) error {
+			var (
+				this gta.Vehicle
+				dbs  = argument.Context.GetDB()
+			)
+			if err := dbs.Select("id").Where("id = ?", argument.Context.ResourceID).Find(&this).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			if err := dbs.Model(&gta.Vehicle{}).Where("id = ?", this.ID).Update("already_has", true).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *frameAdmin.Context) bool {
+			var (
+				this = record.(*voVehicle)
+			)
+			if !this.AlreadyHas {
+				return true
+			}
+			return false
+		},
+		Modes: []string{"menu_item"},
+	})
+	res.Action(&frameAdmin.Action{
+		Name: "UnAlreadyHas",
+		Handler: func(argument *frameAdmin.ActionArgument) error {
+			var (
+				this gta.Vehicle
+				dbs  = argument.Context.GetDB()
+			)
+			if err := dbs.Select("id").Where("id = ?", argument.Context.ResourceID).Find(&this).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			if err := dbs.Model(&gta.Vehicle{}).Where("id = ?", this.ID).Update("already_has", false).Error; err != nil {
+				return log_utils.PrintErrorStackTraceFriendly(err)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *frameAdmin.Context) bool {
+			var (
+				this = record.(*voVehicle)
+			)
+			if this.AlreadyHas {
+				return true
+			}
+			return false
+		},
+		Modes: []string{"menu_item"},
+	})
+	//	region
 
 }

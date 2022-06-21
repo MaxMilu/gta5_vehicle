@@ -3,16 +3,21 @@
 {{$has_update_permission := has_update_permission $resource}}
 {{$has_delete_permission := has_delete_permission $resource}}
 
-{{if len .Result}}
-    {{$metas := convert_sections_to_metas $resource index_sections}}
-    <table class="mdl-js-data-table qor-js-table qor-table--medialibrary">
-        <thead>
-        <tr>
-            <th>&nbsp;
-            </th>
-        </tr>
-        </thead>
-        <tbody>
+
+<h1>this is test</h1>
+
+<table class="mdl-js-data-table qor-js-table qor-table--medialibrary">
+    <thead>
+    <tr>
+        <th>&nbsp;
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+
+    {{if len .Result}}
+        {{$metas := convert_sections_to_metas $resource index_sections}}
+
         {{range $result := .Result}}
             {{$primaryKey := primary_key_of $result}}
             {{$uniqueKey := unique_key_of $result}}
@@ -22,7 +27,6 @@
                     <div class="mdl-card mdl-shadow--2dp qor-table--medialibrary-item">
                         <div class="mdl-card__supporting-text qor-table--ml-slideout"
                              data-url="{{url_for $result $resource}}">
-                            <p></p>
                             {{range $meta := $metas}}
                                 <p data-heading="{{$meta.Name}}">{{render_meta $result $meta}}</p>
                             {{end}}
@@ -46,12 +50,21 @@
                                 </ul>
                             </div>
                         {{end}}
+
                     </div>
                 </td>
             </tr>
         {{end}}
-        </tbody>
-    </table>
-{{else}}
-    <h2 class="qor-page__tips">{{t (printf "%v.tables.no_items" $resource.ToParam) (printf "No %v to show." (lower (plural $resource.Name)))}}</h2>
-{{end}}
+
+
+    {{else}}
+        <tr>
+            <td>
+                <h2 class="qor-page__tips">{{t (printf "%v.tables.no_items" $resource.ToParam) (printf "No %v to show." (lower (plural $resource.Name)))}}</h2>
+            </td>
+        </tr>
+    {{end}}
+
+    </tbody>
+</table>
+

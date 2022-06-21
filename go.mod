@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.7.7
+	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/jinzhu/configor v1.2.1
 	github.com/jinzhu/gorm v1.9.16
@@ -13,7 +14,9 @@ require (
 	github.com/qor/l10n v0.0.0-20181031091737-2ca95fb3b4dd
 	github.com/qor/media v0.0.0-20200720100650-60c52edf57cb
 	github.com/qor/publish2 v0.0.0-20200729081509-d97fdb5620a5
+	github.com/qor/qor v0.0.0-20210618082622-a52aba0a0ce1
 	github.com/qor/qor-example v0.0.0-20200821034639-57633ac0f7fd
+	github.com/qor/render v1.1.1
 	github.com/qor/sorting v0.0.0-20200724034229-cdba739ba535
 	github.com/qor/validations v0.0.0-20171228122639-f364bca61b46
 )
@@ -25,7 +28,6 @@ require (
 	github.com/chris-ramon/douceur v0.2.0 // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-chi/chi v4.1.2+incompatible // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
@@ -47,7 +49,6 @@ require (
 	github.com/qor/audited v0.0.0-20171228121055-b52c9c2f0571 // indirect
 	github.com/qor/middlewares v0.0.0-20170822143614-781378b69454 // indirect
 	github.com/qor/publish v0.0.0-20181014061411-abfbacee9e0d // indirect
-	github.com/qor/qor v0.0.0-20210618082622-a52aba0a0ce1 // indirect
 	github.com/qor/responder v0.0.0-20171031032654-b6def473574f // indirect
 	github.com/qor/roles v0.0.0-20171127035124-d6375609fe3e // indirect
 	github.com/qor/serializable_meta v0.0.0-20180510060738-5fd8542db417 // indirect

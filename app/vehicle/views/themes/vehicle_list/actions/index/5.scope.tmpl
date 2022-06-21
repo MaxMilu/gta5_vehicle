@@ -1,0 +1,78 @@
+<div class="qor-actions mdl-layout__header qor-page__header qor-page-subnav__header">
+    <div class="mdl-layout__tab-bar mdl-layout__tab-bar-container">
+        {{$order_by := .Context.Request.URL.Query.Get "scopes"}}
+        <a class="mdl-layout__tab{{if or (eq $order_by "") (eq $order_by "All")}} is-active{{end}}"
+           href={{patch_current_url "scopes" "All"}}>
+            {{t "admin.gta.vehicle.scope.all" "All"}} (<span id="allQuantity">...</span>)
+        </a>
+        <a class="mdl-layout__tab{{if (eq $order_by "Like")}} is-active{{end}}"
+           href={{patch_current_url "scopes" "Like"}}>
+            {{t "admin.gta.vehicle.scope.like" "Like"}} (<span id="likeQuantity">...</span>)
+        </a>
+        <a class="mdl-layout__tab{{if (eq $order_by "Wishlist")}} is-active{{end}}"
+           href={{patch_current_url "scopes" "Wishlist"}}>
+            {{t "admin.gta.vehicle.scope.wishlist" "Wishlist"}} (<span
+                    id="wishlistQuantity">...</span>)
+        </a>
+        <a class="mdl-layout__tab{{if (eq $order_by "AlreadyHas")}} is-active{{end}}"
+           href={{patch_current_url "scopes" "AlreadyHas"}}>
+            {{t "admin.gta.vehicle.scope.already_has" "AlreadyHas"}} (<span
+                    id="alreadyHasQuantity">...</span>)
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        setTimeout(getQuantityAll, 500)
+        setTimeout(getQuantityLike, 1000)
+        setTimeout(getQuantityWishlist, 1500)
+        setTimeout(getQuantityAlreadyHas, 2000)
+    });
+
+    function getQuantityAll() {
+        getQuantity("All")
+    }
+
+    function getQuantityLike() {
+        getQuantity("Like")
+    }
+
+    function getQuantityWishlist() {
+        getQuantity("Wishlist")
+    }
+
+    function getQuantityAlreadyHas() {
+        getQuantity("AlreadyHas")
+    }
+
+
+    function getQuantity(funcName) {
+        $.ajax({
+            type: "POST",
+            url: "/admin/gta/vehicle_list_get_scope_quantity",
+            dataType: "json",
+            data: {
+                functionName: funcName,
+            },
+            success: function (result) {
+                if (result.Status === "Success") {
+                    if (funcName === "All") {
+                        $("#allQuantity").text(result.Result.Quantity)
+                    } else if (funcName === "Like") {
+                        $("#likeQuantity").text(result.Result.Quantity)
+                    } else if (funcName === "Wishlist") {
+                        $("#wishlistQuantity").text(result.Result.Quantity)
+                    } else if (funcName === "AlreadyHas") {
+                        $("#alreadyHasQuantity").text(result.Result.Quantity)
+                    }
+                } else {
+                    QOR.alertFailure(result.Message)
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                QOR.alertFailure("system error")
+                console.log(textStatus + ": " + errorThrown);
+            }
+        });
+    }
+</script>

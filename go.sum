@@ -158,6 +158,7 @@ github.com/qor/qor v0.0.0-20210618082622-a52aba0a0ce1/go.mod h1:o/VCIcWT8JQ+9t6f
 github.com/qor/qor-example v0.0.0-20200821034639-57633ac0f7fd h1:6BVq9d9OJiSAODBf69km0pvjR29rfKaWkhUR2eilpPQ=
 github.com/qor/qor-example v0.0.0-20200821034639-57633ac0f7fd/go.mod h1:qKK5N90W0SqjpQqfX8BfdaDJZqTrmEkdCFKOPGxSUuk=
 github.com/qor/redirect_back v0.0.0-20170907030740-b4161ed6f848/go.mod h1:AVSTi6lUuohiM2HbnXuN07YucBDRSGHaKz8jAI2DYOU=
+github.com/qor/render v1.1.1 h1:DaGaKlf0OzpOB+hJUEiOTbZ40mg+n+LlSJx20/KUfes=
 github.com/qor/render v1.1.1/go.mod h1:0cGVpTjSVSjjyrhLiLTMgbMeblLQba7vcKkZHMLlYJw=
 github.com/qor/responder v0.0.0-20171031032654-b6def473574f h1:sKELSAyL+z5BRHFe97Bx71z197cBEobVJ6rASKTMSqU=
 github.com/qor/responder v0.0.0-20171031032654-b6def473574f/go.mod h1:0TL2G+qGDYhHJ6XIJ6UcqkZVN+jp8AGqGU2wDnv2qas=

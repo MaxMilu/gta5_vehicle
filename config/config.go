@@ -31,3 +31,7 @@ func init() {
 		return
 	}
 }
+
+var StaticFileFolders = []string{
+	"javascripts", "stylesheets", "images", "sounds", "dist", "fonts", "vendors", "html",
+}
